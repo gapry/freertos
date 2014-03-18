@@ -107,8 +107,10 @@ qemu: main.bin $(QEMU_STM32)
 
 qemudbg: main.bin $(QEMU_STM32)
 	$(QEMU_STM32) -M stm32-p103 \
+		-monitor stdio \
 		-gdb tcp::3333 -S \
-		-kernel main.bin -semihosting
+		-kernel main.bin -semihosting 2>&1>/dev/null & \
+		$(CROSS_COMPILE)gdbtui -x script/gdbscript
 
 clean:
 	rm -f *.o *.elf *.bin *.list mkromfs
