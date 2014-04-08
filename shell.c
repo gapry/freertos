@@ -112,11 +112,33 @@ void man_command(int n, char *argv[]){
 void host_command(int n, char *argv[]){
 	if(n>1){
 		int len=strlen(argv[1]), rnt;
+
+		char ipt[20] = {'\0'};
+		char cmdBuf[10] = {'\0'};
+		char argBuf[10] = {'\0'};
+		char* space = " ";
+
+		strcpy (cmdBuf, argv[1]);
+		strcpy (argBuf, argv[2]);
+	
+		int i = 0;
+		int foo = 0;
+
+		for (i = 0; i < strlen (cmdBuf); ++i) {
+			ipt[i] = cmdBuf[i];
+		}
+		foo = i;
+		ipt[foo] = *space;
+		for (i = 0; i < strlen (argBuf); ++i) {
+			ipt[i+foo+1] = argBuf[i];
+		}
+
 		if(argv[1][0]=='\''){
 			argv[1][len-1]='\0';
-			rnt=host_system(argv[1]+1);
-		}else
-			rnt=host_system(argv[1]);
+			rnt=host_system(ipt);
+		}else {
+			rnt=host_system(ipt);
+		}
 		fio_printf(1, "\r\nfinish with exit code %d.\r\n", rnt);
 	}else
 		fio_printf(2, "\r\nUsage: host 'command'\r\n");
