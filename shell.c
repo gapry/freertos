@@ -109,39 +109,49 @@ void man_command(int n, char *argv[]){
 		fio_printf(2, "\r\nManual not available.\r\n");
 }
 
-void host_command(int n, char *argv[]){
-	if(n>1){
-		int len=strlen(argv[1]), rnt;
-
-		char ipt[20] = {'\0'};
-		char cmdBuf[10] = {'\0'};
-		char argBuf[10] = {'\0'};
+void host_command (int ipt_len, char *argv[]) 
+{
+	if (ipt_len > 1) 
+	{
+		int rnt = 0, i = 0, cmd_len = 0;
+		char ipt[50] = {'\0'}, cmd_buf[10] = {'\0'}, arg_buf[10] = {'\0'};
 		char* space = " ";
+		char* cmd_write = "write";
+		char* w_file = ">> sysinfo";
+		ipt_len = strlen (*(argv + 1));
+		
+		strcpy (arg_buf, 2[argv]);
+		if (strcmp (1[argv], cmd_write) == 0)
+			strcpy (cmd_buf, "echo");
+		else	
+			strcpy (cmd_buf, 1[argv]);
 
-		strcpy (cmdBuf, argv[1]);
-		strcpy (argBuf, argv[2]);
-	
-		int i = 0;
-		int foo = 0;
+		for (i = 0; i < strlen (cmd_buf); ++i) 
+			(ipt + i)[0] = i[&cmd_buf[0]];
 
-		for (i = 0; i < strlen (cmdBuf); ++i) {
-			ipt[i] = cmdBuf[i];
-		}
-		foo = i;
-		ipt[foo] = *space;
-		for (i = 0; i < strlen (argBuf); ++i) {
-			ipt[i+foo+1] = argBuf[i];
+		cmd_len = i;
+		*(ipt + cmd_len) = *space;
+		for (i = 0; i < strlen (arg_buf); ++i) 
+			*(ipt + i + cmd_len + 1) = arg_buf[i];
+		//fio_printf (1, "\r\n %s .\r\n", ipt);
+
+		cmd_len = strlen (cmd_buf) + 1 + strlen (arg_buf);
+		*(ipt + cmd_len) = *space;
+		for (i = 0; i < strlen (w_file) && strcmp (*(argv + 1), cmd_write) == 0; ++i)
+			*(ipt + i + cmd_len + 1) = *(w_file + i);
+		//fio_printf (1, "\r\n %s .\r\n", ipt);
+		
+		if (argv[1][0] == '\'') 
+		{
+			argv[1][ipt_len - 1] = '\0';
+			rnt = host_system (ipt);
+		} else {
+			rnt = host_system (ipt);
 		}
 
-		if(argv[1][0]=='\''){
-			argv[1][len-1]='\0';
-			rnt=host_system(ipt);
-		}else {
-			rnt=host_system(ipt);
-		}
-		fio_printf(1, "\r\nfinish with exit code %d.\r\n", rnt);
-	}else
-		fio_printf(2, "\r\nUsage: host 'command'\r\n");
+		fio_printf (1, "\r\nfinish with exit code %d.\r\n", rnt);
+	} else
+		fio_printf (2, "\r\nUsage: host 'command'\r\n");
 }
 
 void help_command(int n,char *argv[]){
